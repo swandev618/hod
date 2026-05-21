@@ -1,11 +1,10 @@
 import {
   HeroSlider,
   WhyInyeonSection,
-  ServicePreview,
+  PricingSection,
   MatchingProcess,
   StatsCounter,
   ReviewCarousel,
-  CtaBanner,
 } from "@/components/home";
 
 export default function HomePage() {
@@ -13,7 +12,7 @@ export default function HomePage() {
     <>
       <HeroSlider />
       <WhyInyeonSection />
-      <ServicePreview />
+      <PricingSection />
       <MatchingProcess />
       <StatsCounter />
       <ReviewCarousel />

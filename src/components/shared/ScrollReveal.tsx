@@ -31,9 +31,12 @@ export function ScrollReveal({
     none: {},
   };
 
+  const needsFullHeight = className?.includes("h-full");
+
   return (
     <div ref={ref} className={cn(className)}>
       <motion.div
+        className={needsFullHeight ? "h-full" : undefined}
         initial={{ opacity: 0, ...directionOffset[direction] }}
         animate={
           isInView
