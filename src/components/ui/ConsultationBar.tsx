@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { useCtaState } from "@/context/CtaContext";
+import { PhoneVerifyInput } from "@/components/ui/PhoneVerifyInput";
 
 export function ConsultationBar() {
   const { expanded, setExpanded } = useCtaState();
@@ -11,7 +12,6 @@ export function ConsultationBar() {
     gender: "",
     age: "",
     phone: "",
-    ethnicity: "",
     code: "",
   });
   const [agreed, setAgreed] = useState(false);
@@ -25,7 +25,6 @@ export function ConsultationBar() {
     if (!formData.phone.trim()) newErrors.phone = "연락처를 입력해주세요";
     else if (!/^\d{10,11}$/.test(formData.phone.replace(/-/g, "")))
       newErrors.phone = "올바른 연락처를 입력해주세요";
-    if (!formData.ethnicity) newErrors.ethnicity = "선택해주세요";
     if (!formData.code.trim()) newErrors.code = "인증번호를 입력해주세요";
     else if (!/^\d{6}$/.test(formData.code))
       newErrors.code = "6자리 숫자를 입력해주세요";
@@ -44,7 +43,6 @@ export function ConsultationBar() {
         gender: "",
         age: "",
         phone: "",
-        ethnicity: "",
         code: "",
       });
       setAgreed(false);
@@ -52,8 +50,13 @@ export function ConsultationBar() {
     }
   }
 
-  function handleCollapsedCta() {
-    setExpanded(true);
+  const inputBase =
+    "w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-gold";
+  const selectBase =
+    "w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white/80 focus:outline-none focus:border-gold appearance-none";
+
+  function borderClass(field: string) {
+    return errors[field] ? "border-red-400" : "border-white/20";
   }
 
   return (
@@ -76,28 +79,30 @@ export function ConsultationBar() {
               접기 <ChevronDown size={12} />
             </button>
 
-            <div className="relative z-10 container-wide py-10 md:py-12 pr-3 md:pr-4">
+            <div className="relative z-10 container-wide py-8 md:py-10">
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+                {/* Header */}
+                <div className="flex items-center gap-4 md:gap-6">
                   <img
-                    src="https://i.ibb.co/3ybYqRsq/logo-gold.png"
+                    src="/인집_메인화면_이미지/logo-gold.png"
                     alt="인연의집 로고"
                     className="h-8 w-auto"
                   />
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold text-white">
+                    <h2 className="text-lg md:text-xl font-bold text-white">
                       당신의 <span className="text-gold">인연</span>, 지금{" "}
                       <span className="text-gold">시작</span>해보세요
                     </h2>
-                    <p className="text-xs md:text-sm text-white/60 mt-0.5">
-                      아래 정보를 입력하시면 전문 상담원이 연락드립니다
+                    <p className="text-[11px] md:text-xs text-white/60 mt-0.5">
+                      프라이빗한 1:1 맞춤 상담원 통해 인연을 만나보세요
                     </p>
                   </div>
                 </div>
 
+                {/* Form */}
                 <form className="w-full" onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-                    <div className="min-h-[58px]">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                    <div>
                       <input
                         type="text"
                         placeholder="이름 (예: 홍길동)"
@@ -105,29 +110,33 @@ export function ConsultationBar() {
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
-                        className={`w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-gold ${errors.name ? "border-red-400" : "border-white/20"}`}
+                        className={`${inputBase} ${borderClass("name")}`}
                       />
-                      <p className={`text-[10px] mt-0.5 h-3 ${errors.name ? "text-red-400" : "text-transparent"}`}>
-                        {errors.name || "\u00A0"}
-                      </p>
+                      {errors.name && (
+                        <p className="text-[10px] mt-0.5 text-red-400">
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
-                    <div className="min-h-[58px]">
+                    <div>
                       <select
                         value={formData.gender}
                         onChange={(e) =>
                           setFormData({ ...formData, gender: e.target.value })
                         }
-                        className={`w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white/80 focus:outline-none focus:border-gold appearance-none ${errors.gender ? "border-red-400" : "border-white/20"}`}
+                        className={`${selectBase} ${borderClass("gender")}`}
                       >
                         <option value="">성별</option>
                         <option value="male">남성</option>
                         <option value="female">여성</option>
                       </select>
-                      <p className={`text-[10px] mt-0.5 h-3 ${errors.gender ? "text-red-400" : "text-transparent"}`}>
-                        {errors.gender || "\u00A0"}
-                      </p>
+                      {errors.gender && (
+                        <p className="text-[10px] mt-0.5 text-red-400">
+                          {errors.gender}
+                        </p>
+                      )}
                     </div>
-                    <div className="min-h-[58px]">
+                    <div>
                       <input
                         type="text"
                         placeholder="나이 (예: 34)"
@@ -135,46 +144,23 @@ export function ConsultationBar() {
                         onChange={(e) =>
                           setFormData({ ...formData, age: e.target.value })
                         }
-                        className={`w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-gold ${errors.age ? "border-red-400" : "border-white/20"}`}
+                        className={`${inputBase} ${borderClass("age")}`}
                       />
-                      <p className={`text-[10px] mt-0.5 h-3 ${errors.age ? "text-red-400" : "text-transparent"}`}>
-                        {errors.age || "\u00A0"}
-                      </p>
+                      {errors.age && (
+                        <p className="text-[10px] mt-0.5 text-red-400">
+                          {errors.age}
+                        </p>
+                      )}
                     </div>
-                    <div className="min-h-[58px]">
-                      <input
-                        type="text"
-                        placeholder="연락처 (- 없이 입력)"
-                        value={formData.phone}
-                        onChange={(e) =>
-                          setFormData({ ...formData, phone: e.target.value })
-                        }
-                        className={`w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-gold ${errors.phone ? "border-red-400" : "border-white/20"}`}
-                      />
-                      <p className={`text-[10px] mt-0.5 h-3 ${errors.phone ? "text-red-400" : "text-transparent"}`}>
-                        {errors.phone || "\u00A0"}
-                      </p>
-                    </div>
-                    <div className="min-h-[58px]">
-                      <select
-                        value={formData.ethnicity}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            ethnicity: e.target.value,
-                          })
-                        }
-                        className={`w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white/80 focus:outline-none focus:border-gold appearance-none ${errors.ethnicity ? "border-red-400" : "border-white/20"}`}
-                      >
-                        <option value="">민족여부</option>
-                        <option value="yes">해당</option>
-                        <option value="no">비해당</option>
-                      </select>
-                      <p className={`text-[10px] mt-0.5 h-3 ${errors.ethnicity ? "text-red-400" : "text-transparent"}`}>
-                        {errors.ethnicity || "\u00A0"}
-                      </p>
-                    </div>
-                    <div className="min-h-[58px]">
+                    <PhoneVerifyInput
+                      value={formData.phone}
+                      onChange={(v) =>
+                        setFormData({ ...formData, phone: v })
+                      }
+                      error={errors.phone}
+                      variant="dark"
+                    />
+                    <div>
                       <input
                         type="text"
                         placeholder="인증번호 6자리 입력"
@@ -182,14 +168,17 @@ export function ConsultationBar() {
                         onChange={(e) =>
                           setFormData({ ...formData, code: e.target.value })
                         }
-                        className={`w-full px-3 py-2.5 bg-white/10 border rounded text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-gold ${errors.code ? "border-red-400" : "border-white/20"}`}
+                        className={`${inputBase} ${borderClass("code")}`}
                       />
-                      <p className={`text-[10px] mt-0.5 h-3 ${errors.code ? "text-red-400" : "text-transparent"}`}>
-                        {errors.code || "\u00A0"}
-                      </p>
+                      {errors.code && (
+                        <p className="text-[10px] mt-0.5 text-red-400">
+                          {errors.code}
+                        </p>
+                      )}
                     </div>
                   </div>
 
+                  {/* Bottom row */}
                   <div className="mt-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                     <label className="flex items-center gap-2 text-xs text-white/70 cursor-pointer">
                       <input
@@ -209,7 +198,7 @@ export function ConsultationBar() {
                       </button>
                     </label>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2">
                       <button
                         type="submit"
                         className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-b from-[#e7c692] to-[#caa76a] text-dark rounded font-semibold text-sm hover:opacity-90 transition-opacity"
@@ -221,7 +210,7 @@ export function ConsultationBar() {
                         type="button"
                         className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/30 text-white rounded font-medium text-sm hover:bg-white/10 transition-colors"
                       >
-                        카카오톡 상담
+                        카톡 상담
                       </button>
                     </div>
                   </div>
@@ -231,18 +220,18 @@ export function ConsultationBar() {
           </div>
         ) : (
           <div className="relative bg-black">
-            <div className="relative z-10 container-wide py-3 md:py-4 pr-3 md:pr-4">
+            <div className="relative z-10 container-wide py-3 md:py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 md:gap-6">
                   <img
-                    src="https://i.ibb.co/3ybYqRsq/logo-gold.png"
+                    src="/인집_메인화면_이미지/logo-gold.png"
                     alt="인연의집 로고"
                     className="h-6 md:h-7 w-auto"
                   />
                   <div>
                     <h2 className="text-sm md:text-base font-bold text-white">
                       당신의 <span className="text-gold">인연</span>, 지금{" "}
-                      <span className="text-gold">시작</span>해보세요.
+                      <span className="text-gold">시작</span>해보세요
                     </h2>
                     <p className="text-[10px] md:text-xs text-white/60 mt-0.5">
                       프라이빗한 1:1 맞춤 상담원 통해 인연을 만나보세요
@@ -250,10 +239,10 @@ export function ConsultationBar() {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={handleCollapsedCta}
+                    onClick={() => setExpanded(true)}
                     className="inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 bg-gradient-to-b from-[#e7c692] to-[#caa76a] text-dark rounded font-semibold text-xs md:text-sm hover:opacity-90 transition-opacity"
                   >
                     무료 상담 신청
@@ -263,7 +252,7 @@ export function ConsultationBar() {
                     type="button"
                     className="inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 border border-white/30 text-white rounded font-medium text-xs md:text-sm hover:bg-white/10 transition-colors"
                   >
-                    카카오톡 상담
+                    카톡 상담
                   </button>
                 </div>
               </div>
@@ -272,7 +261,7 @@ export function ConsultationBar() {
         )}
       </div>
 
-      <div className={expanded ? "h-52 md:h-48" : "h-16"} />
+      <div className={expanded ? "h-52 md:h-44" : "h-14 md:h-16"} />
     </>
   );
 }
