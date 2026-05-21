@@ -17,7 +17,6 @@ export default function HomePage() {
       <MatchingProcess />
       <StatsCounter />
       <ReviewCarousel />
-      <CtaBanner />
     </>
   );
 }

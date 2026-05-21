@@ -30,7 +30,7 @@ export function FloatingButtons() {
     <div
       className={cn(
         "fixed right-[30px] z-40 flex flex-col-reverse items-end gap-2 transition-all duration-300",
-        ctaExpanded ? "bottom-[300px] md:bottom-[260px]" : "bottom-[80px]",
+        ctaExpanded ? "bottom-[420px] md:bottom-[280px]" : "bottom-[80px]",
       )}
     >
       <button

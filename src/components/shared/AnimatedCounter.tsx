@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useInView } from "@/hooks/useInView";
 import { cn } from "@/lib/utils";
 
@@ -21,29 +21,37 @@ export function AnimatedCounter({
   className,
   separator = true,
 }: AnimatedCounterProps) {
-  const { ref, isInView } = useInView({ threshold: 0.3, once: true });
+  const { ref, isInView } = useInView({ threshold: 0.3, once: false });
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    if (!isInView) return;
-
+  const animate = useCallback(() => {
     let startTime: number | null = null;
     let animationFrame: number;
 
-    const animate = (timestamp: number) => {
+    const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.floor(eased * end));
 
       if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
+        animationFrame = requestAnimationFrame(step);
       }
     };
 
-    animationFrame = requestAnimationFrame(animate);
+    animationFrame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(animationFrame);
-  }, [isInView, end, duration]);
+  }, [end, duration]);
+
+  useEffect(() => {
+    if (isInView) {
+      setCount(0);
+      const cleanup = animate();
+      return cleanup;
+    } else {
+      setCount(0);
+    }
+  }, [isInView, animate]);
 
   const formatNumber = (num: number) => {
     if (separator) {
